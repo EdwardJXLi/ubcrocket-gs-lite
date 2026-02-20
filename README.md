@@ -6,8 +6,8 @@ Serial decoder for UBC Rocket's COBS-encoded, CRC-protected protobuf packets.
 
 The firmware sends packets in the following format:
 
-1. **Protobuf payload** - Serialized `HelloWorldPacket`
-2. **CRC32** - 4 bytes, little-endian (standard CRC-32 polynomial)
+1. **Protobuf payload** - Serialized `TelemetryPacket`
+2. **CRC16** - 2 bytes, little-endian (CRC16-CCITT, init 0x0000)
 3. **COBS encoding** - The payload+CRC is COBS encoded
 4. **Delimiter** - `0x00` byte marks end of packet
 
@@ -39,21 +39,16 @@ uv run simple-gs /dev/ttyUSB0 -t 2.0
 Opening /dev/ttyUSB0 at 115200 baud...
 Connected. Listening for packets...
 
-[1] HelloWorldPacket:
-       counter = 42
-       message = "Hello from rocket!"
-
-[2] HelloWorldPacket:
-       counter = 43
-       message = "Hello from rocket!"
+[1] t=    1000ms | STANDBY        | Alt:     0.00m | Vel:    0.00m/s | GPS: 49.26061,-123.24599 (8sats) | B0:OK B1:OK
+[2] t=    1100ms | STANDBY        | Alt:     0.00m | Vel:    0.00m/s | GPS: 49.26061,-123.24599 (8sats) | B0:OK B1:OK
 ```
 
 ## Regenerating Protobuf
 
-If you update the `.proto` file:
+If you update the `.proto` files:
 
 ```bash
-protoc --python_out=simple_gs --proto_path=falcon-protos falcon-protos/HelloWorldPacket.proto
+protoc --python_out=simple_gs -Ifalcon-protos falcon-protos/TelemetryPacket.proto falcon-protos/HelloWorldPacket.proto
 ```
 
 ## CRC Mismatch
@@ -61,8 +56,6 @@ protoc --python_out=simple_gs --proto_path=falcon-protos falcon-protos/HelloWorl
 If the CRC doesn't match, you'll see a warning but the packet will still be decoded:
 
 ```
-[WARNING] CRC mismatch! Received: 0xDEADBEEF, Computed: 0x12345678
-[1] HelloWorldPacket:
-       counter = 42
-       message = "Hello from rocket!"
+[WARNING] CRC mismatch! Received: 0xDEAD, Computed: 0x1234
+[1] t=    1000ms | STANDBY        | Alt:     0.00m | Vel:    0.00m/s | GPS: 49.26061,-123.24599 (8sats) | B0:OK B1:OK
 ```
