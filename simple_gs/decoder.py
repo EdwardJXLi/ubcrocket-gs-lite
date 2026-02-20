@@ -3,7 +3,7 @@
 Serial decoder for COBS-encoded, CRC-protected protobuf packets.
 
 Packet format (before COBS encoding):
-    [protobuf_data][crc32_le (4 bytes)]
+    [protobuf_data][crc16_le (2 bytes)]
 
 COBS framing:
     - Packets are COBS encoded
@@ -125,8 +125,20 @@ CSV_COLUMNS = [
     "gyro_z",
     "kf_altitude",
     "kf_velocity",
+    "kf_alt_variance",
+    "kf_vel_variance",
     "baro0_healthy",
     "baro1_healthy",
+    "baro0_pressure",
+    "baro0_temperature",
+    "baro0_altitude",
+    "baro0_nis",
+    "baro0_faults",
+    "baro1_pressure",
+    "baro1_temperature",
+    "baro1_altitude",
+    "baro1_nis",
+    "baro1_faults",
     "ground_altitude",
     "gps_latitude",
     "gps_longitude",
@@ -152,8 +164,20 @@ def packet_to_csv_row(packet: TelemetryPacket) -> list:
         packet.gyro_z,
         packet.kf_altitude,
         packet.kf_velocity,
+        packet.kf_alt_variance,
+        packet.kf_vel_variance,
         packet.baro0_healthy,
         packet.baro1_healthy,
+        packet.baro0_pressure,
+        packet.baro0_temperature,
+        packet.baro0_altitude,
+        packet.baro0_nis,
+        packet.baro0_faults,
+        packet.baro1_pressure,
+        packet.baro1_temperature,
+        packet.baro1_altitude,
+        packet.baro1_nis,
+        packet.baro1_faults,
         packet.ground_altitude,
         packet.gps_latitude,
         packet.gps_longitude,
@@ -282,8 +306,20 @@ def main():
                         print(f"    gyro_z:          {packet.gyro_z:.4f}")
                         print(f"    kf_altitude:     {packet.kf_altitude:.4f}")
                         print(f"    kf_velocity:     {packet.kf_velocity:.4f}")
+                        print(f"    kf_alt_variance: {packet.kf_alt_variance:.4f}")
+                        print(f"    kf_vel_variance: {packet.kf_vel_variance:.4f}")
                         print(f"    baro0_healthy:   {packet.baro0_healthy}")
+                        print(f"    baro0_pressure:  {packet.baro0_pressure:.2f}")
+                        print(f"    baro0_temp:      {packet.baro0_temperature:.2f}")
+                        print(f"    baro0_altitude:  {packet.baro0_altitude:.4f}")
+                        print(f"    baro0_nis:       {packet.baro0_nis:.4f}")
+                        print(f"    baro0_faults:    {packet.baro0_faults}")
                         print(f"    baro1_healthy:   {packet.baro1_healthy}")
+                        print(f"    baro1_pressure:  {packet.baro1_pressure:.2f}")
+                        print(f"    baro1_temp:      {packet.baro1_temperature:.2f}")
+                        print(f"    baro1_altitude:  {packet.baro1_altitude:.4f}")
+                        print(f"    baro1_nis:       {packet.baro1_nis:.4f}")
+                        print(f"    baro1_faults:    {packet.baro1_faults}")
                         print(f"    ground_altitude: {packet.ground_altitude:.4f}")
                         print(f"    gps_latitude:    {packet.gps_latitude:.6f}")
                         print(f"    gps_longitude:   {packet.gps_longitude:.6f}")
